@@ -16,6 +16,8 @@ merged = merged.reset_index()
 
 kernelrbf = 1 * RBF(length_scale=3.0, length_scale_bounds=(1e-2, 1e2))
 gprrbf = GaussianProcessRegressor(kernel=kernelrbf, n_restarts_optimizer=100, normalize_y = True,alpha = 1e-5)
+kernelmatern = 1.0 * Matern(length_scale=1.0, length_scale_bounds=(1e-1, 10.0),nu=1.5)
+gprmatern = GaussianProcessRegressor(kernel=kernelmatern, n_restarts_optimizer=100, normalize_y = True,alpha = 1e-5)
 
 energy = merged.iloc[:]['Energy (kWh)']
 energy = np.array(energy).reshape(-1,1)
@@ -29,6 +31,7 @@ ytrain = np.array(y_train).reshape(-1,1)
 ytest = np.array(y_test).reshape(-1,1)
 
 gprrbf.fit(Xtrain,ytrain)
+gprmatern.fit(Xtrain,ytrain)
 
 predictions = np.array(gprrbf.predict(Xtest)).reshape(52,1)
 r2rbf = r2_score(ytest,predictions)
